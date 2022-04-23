@@ -16,38 +16,45 @@ def parse_label(word_id):
     return int(rst[1])
 
 
-def load_dataset(path, label=None, sentence_id=True):
+def load_dataset(path, label=None, text_id_as_index=False):
     '''
     Parse xml into pandas dataframe
-    Example:
-        df['hom_1'].sentence = List['str'] # represents each word
-    Optional:
-        df['hom_1'].sentence_id = 'hom_1' # keep sentence_id for numpy array
-        df['hom_1'].word_id = 11 # 11th word is the label (index starts from 0)
-        df['hom_1'].target_word = 'sweat'
+    Columns:
+        text_id: Str, text id of this row
+        text: List[Str], a list of each word in text
+        word_id: Int, index of target word in sentence
+        target_word: Str, target word (== text[word_id])
+
+    Options:
+        label: load label for training data
+        text_id_as_index: set dataframe index as text_id
     '''
     tree = ET.parse(path)
     root = tree.getroot()
-    df = {}
-    for id in root:
-        df[id.attrib['id']] = []
-        for content in id:
-            df[id.attrib['id']].append(content.text)
+    df = {
+        'text_id': [],
+        'text': [],
+    }
 
-    df = pd.Series(df, dtype=object)
-    df = pd.DataFrame(df, index=df.index, columns=['sentence'])
+    for child in root:
+        df['text_id'].append(child.attrib['id'])
+        df['text'].append([content.text for content in child])
 
-    # save sentence_id as a column
-    if sentence_id:
-        df['sentence_id'] = df.index
+    df = pd.DataFrame(df)
 
     if label is not None:
-        labels = pd.read_csv(label, index_col='text_id')
+        labels = pd.read_csv(label)
         # subtract 1 since index starts from 0
         labels['word_id'] = labels['word_id'].map(parse_label) - 1
-        df = pd.concat([df, labels], axis=1)
+        # merge data & label
+        df = pd.merge(df, labels, how='inner')
+        # extract target word from text
         df['target_word'] = df.apply(
-            lambda series: series['sentence'][series['word_id']], axis=1)
+            lambda series: series['text'][series['word_id']], axis=1)
+
+    if text_id_as_index:
+        # set text_id column as index
+        df.set_index('text_id', inplace=True)
 
     print("########################")
     print(f"Parsed {path}\nPreview:")
@@ -57,10 +64,10 @@ def load_dataset(path, label=None, sentence_id=True):
 
 
 def main():
-    df = load_dataset(r"data\data_homo_train.xml",
-                      label=r'data\benchmark_homo_train.csv',
-                      sentence_id=False)
-    load_dataset(r'data\data_homo_test.xml')
+    train_df = load_dataset(r"data\data_homo_train.xml",
+                            label=r'data\benchmark_homo_train.csv',
+                            text_id_as_index=True)
+    test_df = load_dataset(r'data\data_homo_test.xml')
 
 
 if __name__ == '__main__':
