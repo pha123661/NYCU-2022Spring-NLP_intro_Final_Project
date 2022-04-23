@@ -3,7 +3,7 @@ import re
 import xml.etree.ElementTree as ET
 
 
-def parse_label(word_id):
+def _parse_label(word_id):
     '''
     Example:
         word_id = 'hom_17_8'
@@ -45,7 +45,7 @@ def load_dataset(path, label=None, text_id_as_index=False):
     if label is not None:
         labels = pd.read_csv(label)
         # subtract 1 since index starts from 0
-        labels['word_id'] = labels['word_id'].map(parse_label) - 1
+        labels['word_id'] = labels['word_id'].map(_parse_label) - 1
         # merge data & label
         df = pd.merge(df, labels, how='inner')
         # extract target word from text
