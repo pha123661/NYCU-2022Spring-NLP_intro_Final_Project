@@ -1,7 +1,9 @@
-#Author: 李勝維 符凱喻 許瀚宇 林俊宇
-#Student ID: 0711239 0711278 0812501 0816038
-#HW ID: final_project
-#Due Date: 06/07/2022
+# -*- coding: utf-8 -*-
+
+# Author: 李勝維 符凱喻 許瀚宇 林俊宇
+# Student ID: 0711239 0711278 0812501 0816038
+# HW ID: final_project
+# Due Date: 06/07/2022
 
 import numpy as np
 import random
@@ -44,8 +46,8 @@ tokenizer = BertTokenizer.from_pretrained(bert_model, do_lower_case=False)
 # 把train data轉成example
 train_examples = my_def.get_train_example()
 # 計算train step數
-num_train_optimization_steps = int(math.ceil(len(train_examples)
-                                             / train_batch_size) / gradient_accumulation_steps) * num_train_epochs
+num_train_optimization_steps = int(math.ceil(len(train_examples) /
+                                             train_batch_size) / gradient_accumulation_steps) * num_train_epochs
 
 # 取得pretrained model
 cache_dir = 'for_cache/'
