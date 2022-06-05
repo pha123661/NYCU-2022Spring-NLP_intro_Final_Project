@@ -1,4 +1,7 @@
-# -*- coding:utf-8 -*-
+#Author: 李勝維 符凱喻 許瀚宇 林俊宇
+#Student ID: 0711239 0711278 0812501 0816038
+#HW ID: final_project
+#Due Date: 06/07/2022
 
 import numpy as np
 import random
