@@ -31,12 +31,12 @@ plt.savefig('location dis.png')
 plt.figure()
 
 sns.histplot(
-    x=df['word_id'] / df['text'].apply(len),
+    x=(df['word_id'] / df['text'].apply(len)),
     kde=True,
+    stat='probability'
 ).set(
     title='Pun Location Distribution (%)',
     xlabel='Pun Location (%)',
-    ylabel='Count'
 )
 
 plt.savefig("location percentage.png")
