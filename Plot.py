@@ -31,7 +31,7 @@ plt.savefig('location dis.png')
 plt.figure()
 
 sns.histplot(
-    x=(df['word_id'] / df['text'].apply(len)),
+    x=((df['word_id'] + 1) / df['text'].apply(len)),
     kde=True,
     stat='probability'
 ).set(
